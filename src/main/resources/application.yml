@@ -1,0 +1,50 @@
+spring:
+  application:
+    name:
+      service-calculator
+
+server:
+  port: 8020
+  #eureka.instance.instance-id=${spring.cloud.client.hostname}:${spring.application.name}:${random.int}
+eureka:
+  instance:
+    prefer-ip-address: true
+    lease-renewal-interval-in-seconds: 10
+
+info:
+  app:
+    name: EurekaClient Clase13 service-calculator
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,beans,loggers,info,circuitbreakers,circuitbreakerevents
+  health:
+    circuitbreakers:
+      enabled: true
+  endpoint:
+    health:
+      show-details: always
+
+resilience4j:
+  circuitbreaker:
+    metrics:
+      enabled: true
+    instances:
+      addcalculator:
+        sliding-window-type: COUNT_BASED
+        sliding-window-size: 10
+        minimum-number-of-calls: 5
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 10s
+        permitted-number-of-calls-in-half-open-state: 3
+        automatic-transition-from-open-to-half-open-enabled: true
+        register-health-indicator: true
+
+  timelimiter:
+    configs:
+      default:
+        timeout-duration: 5s
+
+
